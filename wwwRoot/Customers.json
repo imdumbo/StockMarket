@@ -1,0 +1,26 @@
+[
+  {
+    "CustomerID": "79b45e2c-4726-4398-a57a-231d458ede06",
+    "CustomerName": "John Doe"
+  },
+  {
+    "CustomerID": "fcd3beb3-6bad-4c53-b147-c938193bcc6a",
+    "CustomerName": "Jane Smith"
+  },
+  {
+    "CustomerID": "f095865c-f71b-4c45-81fb-95b06f59c0c9",
+    "CustomerName": "Alice Johnson"
+  },
+  {
+    "CustomerID": "a8e44c86-e8ed-4898-953d-bce629c71bb6",
+    "CustomerName": "John Doe"
+  },
+  {
+    "CustomerID": "4efa9afa-b072-4add-9217-70a63119b2b0",
+    "CustomerName": "Jane Smith"
+  },
+  {
+    "CustomerID": "45385520-98d4-4897-ae9f-2b3d4347995b",
+    "CustomerName": "Alice Johnson"
+  }
+]

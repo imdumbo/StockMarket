@@ -1,0 +1,38 @@
+[
+  {
+    "stockID": "baaebc6b-4989-4849-9f2e-e23e849a5335",
+    "stockName": "AAPL",
+    "currentPrice": 150,
+    "previousPrice": 0
+  },
+  {
+    "stockID": "bbf0687b-028d-4e2a-8cd1-cc02b085c976",
+    "stockName": "GOOGL",
+    "currentPrice": 2500,
+    "previousPrice": 0
+  },
+  {
+    "stockID": "d3c8053c-ff5f-4ada-b5fb-06af5fbbf910",
+    "stockName": "MSFT",
+    "currentPrice": 300,
+    "previousPrice": 0
+  },
+  {
+    "stockID": "36c3d400-cc9a-40be-8ed5-f6721fd0db3d",
+    "stockName": "AAPL",
+    "currentPrice": 150,
+    "previousPrice": 0
+  },
+  {
+    "stockID": "f5fd8536-4c8b-4b9e-bef5-69ec465eb0b5",
+    "stockName": "GOOGL",
+    "currentPrice": 2500,
+    "previousPrice": 0
+  },
+  {
+    "stockID": "31691fe2-20a2-4587-bccb-32d0aca0639e",
+    "stockName": "MSFT",
+    "currentPrice": 300,
+    "previousPrice": 0
+  }
+]
