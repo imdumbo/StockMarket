@@ -8,7 +8,7 @@ public class MyDataBaseProcess
     private readonly JsonSerializerOptions _jsonOptions;
     private readonly SemaphoreSlim _fileLock = new(1, 1);
 
-    public MyDataBaseProcess(string baseDirectory = null)
+    public MyDataBaseProcess(string? baseDirectory = null)
     {
         _baseDirectory = baseDirectory ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwRoot");
         _jsonOptions = new JsonSerializerOptions
@@ -19,49 +19,53 @@ public class MyDataBaseProcess
         Directory.CreateDirectory(_baseDirectory);
     }
 
-    public async Task InitializeAsync()
+    public void Initialize()
     {
-        DataBase.Customers = await LoadCollectionAsync<Customer>("Customers");
-        DataBase.Inventories = await LoadCollectionAsync<Inventory>("Inventories");
-        DataBase.Stocks = await LoadCollectionAsync<Stock>("Stocks");
+        DataBase.Customers = LoadCollection<Customer>("Customers");
+        DataBase.Stocks = LoadCollection<Stock>("Stocks");
+        DataBase.Inventories = LoadCollection<Inventory>("Inventories");
 
         Console.WriteLine($"Loaded {DataBase.Customers.Count} customers, {DataBase.Inventories.Count} inventory records, and {DataBase.Stocks.Count} stock records from JSON.");
     }
 
-    public async Task SaveCustomerChangesAsync() => await SaveCollectionAsync("Customers", DataBase.Customers);
-    public async Task SaveInventoryChangesAsync() => await SaveCollectionAsync("Inventories", DataBase.Inventories);
-    public async Task SaveStockChangesAsync() => await SaveCollectionAsync("Stocks", DataBase.Stocks);
+    public void SaveCustomerChanges() => SaveCollection("Customers", DataBase.Customers);
+    public void SaveInventoryChanges() => SaveCollection("Inventories", DataBase.Inventories);
+    public void SaveStockChanges() => SaveCollection("Stocks", DataBase.Stocks);
 
-    public async Task SaveAllChangesAsync()
+    public void SaveAllChanges()
     {
-        await SaveCustomerChangesAsync();
-        await SaveInventoryChangesAsync();
-        await SaveStockChangesAsync();
+        SaveCustomerChanges();
+        SaveInventoryChanges();
+        SaveStockChanges();
     }
 
-    private async Task<List<T>> LoadCollectionAsync<T>(string fileName)
+    private List<T> LoadCollection<T>(string fileName)
     {
         string filePath = GetFilePath(fileName);
 
         if (!File.Exists(filePath))
         {
-            Console.WriteLine($"No existing JSON found for {fileName}. Starting fresh.");
-            await SaveCollectionAsync(fileName, new List<T>());
+            Console.WriteLine($"No existing {fileName} found.");
+            SaveCollection(fileName, new List<T>());
             return new List<T>();
         }
 
-        string json = await File.ReadAllTextAsync(filePath);
+        string json = File.ReadAllText(filePath);
         return JsonSerializer.Deserialize<List<T>>(json, _jsonOptions) ?? new List<T>();
     }
 
-    private async Task SaveCollectionAsync<T>(string fileName, List<T> items)
+    private void SaveCollection<T>(string fileName, List<T> items)
     {
-        await _fileLock.WaitAsync();
+        _fileLock.Wait();
         try
         {
             string filePath = GetFilePath(fileName);
             string json = JsonSerializer.Serialize(items, _jsonOptions);
-            await File.WriteAllTextAsync(filePath, json);
+            File.WriteAllText(filePath, json);
+        }
+        catch (Exception ex)
+        {
+            throw new IOException($"Could not save {fileName} data to {_baseDirectory}.", ex);
         }
         finally
         {

@@ -2,9 +2,9 @@
 {
     public class Stock
     {
-        public Guid stockID { get; set; } = Guid.NewGuid();
-        public string stockName { get; set; }
-        public double currentPrice { get; set; }
-        public double previousPrice { get; set; }
+        public Guid StockId { get; set; } = Guid.NewGuid();
+        public string StockName { get; set; } = string.Empty;
+        public decimal CurrentPrice { get; set; }
+        public decimal PreviousPrice { get; set; }
     }
 }

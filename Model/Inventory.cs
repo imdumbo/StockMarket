@@ -2,7 +2,7 @@
 {
     public class Inventory
     {
-        public Guid customerID { get; set; }
-        public List<Guid> stocks { get; set; }
+        public Guid CustomerId { get; set; }
+        public List<Guid> StockIds { get; set; } = new();
     }
 }
