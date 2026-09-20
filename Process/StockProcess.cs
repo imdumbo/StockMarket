@@ -1,12 +1,14 @@
-﻿using EventService.DAL;
-using EventService.Model;
+﻿using StockMarket.DAL;
+using StockMarket.Model;
 
-namespace EventService.Process
+namespace StockMarket.Process
 {
     public class StockProcess
     {
         private readonly MyDataBaseProcess _dalProcess;
         private readonly Transaction _transaction;
+
+        public Transaction Transaction => _transaction;
 
         // Accept external MyDataBaseProcess so multiple processors share same storage directory
         public StockProcess(MyDataBaseProcess? dalProcess = null)

@@ -1,6 +1,6 @@
-﻿using EventService.Model;
+﻿using StockMarket.Model;
 
-namespace EventService.DAL
+namespace StockMarket.DAL
 {
     public static class DataBase
     {

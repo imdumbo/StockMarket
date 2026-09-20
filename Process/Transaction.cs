@@ -1,11 +1,16 @@
-using EventService.DAL;
-using EventService.Model;
+using StockMarket.DAL;
+using StockMarket.Model;
+using StockMarket.Model.Event;
 
-namespace EventService.Process
+namespace StockMarket.Process
 {
     public class Transaction
     {
         private readonly MyDataBaseProcess _dalProcess;
+
+        public event EventHandler<StockTransactionEventArgs>? StockPurchased;
+        public event EventHandler<StockTransactionEventArgs>? StockSold;
+        public event EventHandler<PriceChangedEventArgs>? PriceChanged;
 
         public Transaction(MyDataBaseProcess? dalProcess = null)
         {
@@ -19,7 +24,8 @@ namespace EventService.Process
                 return "Customer was not found.";
             }
 
-            if (!DataBase.Stocks.Any(s => s.StockId == stockId))
+            Stock? stock = DataBase.Stocks.FirstOrDefault(s => s.StockId == stockId);
+            if (stock is null)
             {
                 return "Stock was not found.";
             }
@@ -34,6 +40,12 @@ namespace EventService.Process
 
             inventory.StockIds.Add(stockId);
             _dalProcess.SaveInventoryChanges();
+
+            OnStockPurchased(new StockTransactionEventArgs(
+                customerId, stockId, stock.StockName, stock.CurrentPrice));
+
+            UpdateStockPrice(stock, 1.05m);
+
             return "Stock purchased successfully.";
         }
 
@@ -45,8 +57,43 @@ namespace EventService.Process
                 return "Customer does not own this stock.";
             }
 
+            Stock? stock = DataBase.Stocks.FirstOrDefault(s => s.StockId == stockId);
             _dalProcess.SaveInventoryChanges();
+
+            if (stock is not null)
+            {
+                OnStockSold(new StockTransactionEventArgs(
+                    customerId, stockId, stock.StockName, stock.CurrentPrice));
+
+                UpdateStockPrice(stock, 0.95m);
+            }
+
             return "Stock sold successfully.";
+        }
+
+        private void UpdateStockPrice(Stock stock, decimal multiplier)
+        {
+            decimal oldPrice = stock.CurrentPrice;
+            stock.PreviousPrice = oldPrice;
+            stock.CurrentPrice = Math.Round(stock.CurrentPrice * multiplier, 2);
+            _dalProcess.SaveStockChanges();
+
+            OnPriceChanged(new PriceChangedEventArgs(stock.StockName, oldPrice, stock.CurrentPrice));
+        }
+
+        protected virtual void OnStockPurchased(StockTransactionEventArgs e)
+        {
+            StockPurchased?.Invoke(this, e);
+        }
+
+        protected virtual void OnStockSold(StockTransactionEventArgs e)
+        {
+            StockSold?.Invoke(this, e);
+        }
+
+        protected virtual void OnPriceChanged(PriceChangedEventArgs e)
+        {
+            PriceChanged?.Invoke(this, e);
         }
 
         private static Inventory CreateInventory(Guid customerId)

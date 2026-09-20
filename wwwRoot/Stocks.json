@@ -2,14 +2,14 @@
   {
     "StockId": "0ece1e94-8134-47e7-99ff-1a5fe0115dc7",
     "StockName": "AAPL",
-    "CurrentPrice": 150.00,
-    "PreviousPrice": 0
+    "CurrentPrice": 149.62,
+    "PreviousPrice": 157.50
   },
   {
     "StockId": "5b68bc52-7e60-4564-9d83-247edf3195aa",
     "StockName": "GOOGL",
-    "CurrentPrice": 2500.00,
-    "PreviousPrice": 0
+    "CurrentPrice": 2493.75,
+    "PreviousPrice": 2625.00
   },
   {
     "StockId": "5abc1909-c2e4-489d-bae7-f04d4951ffaf",

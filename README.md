@@ -1,4 +1,4 @@
-# EventService Stock Market
+# StockMarket Stock Market
 
 A .NET 10 console application that demonstrates a simple stock market workflow for managing customers, stocks, and customer holdings.
 
@@ -23,6 +23,8 @@ The model layer contains the application's data objects:
 - `Customer` represents a customer.
 - `Stock` represents a stock and its current and previous price.
 - `Inventory` represents the stocks owned by a customer.
+- `StockTransactionEventArgs` carries data for purchase and sale events.
+- `PriceChangedEventArgs` carries data for stock price change events.
 
 ### Process layer
 
@@ -30,7 +32,9 @@ The process layer contains the application operations:
 
 - `CustomerProcess` creates, finds, and deletes customers.
 - `StockProcess` creates stocks and handles stock selection from the console.
-- `Transaction` applies BUY and SELL rules.
+- `Transaction` applies BUY and SELL rules and raises events when transactions or price changes occur.
+- `StockMarketEventHandlers` subscribes to transaction events, writes colored console output, and logs to `stockmarket.log`.
+- `PriceAlertService` subscribes to price change events and prints an alert when a stock moves beyond a configurable threshold.
 
 ### Data access layer
 
@@ -64,6 +68,32 @@ wwwRoot/
 - A customer cannot purchase the same stock more than once.
 - A customer cannot sell a stock that they do not own.
 - Deleting a customer also removes the customer's inventory.
+- A purchase raises the stock price by 5%; a sale lowers it by 5%.
+
+## Events
+
+The application uses .NET events (`EventHandler<TEventArgs>`) to decouple the transaction logic from logging and alerting:
+
+| Event | Raised by | When |
+|---|---|---|
+| `StockPurchased` | `Transaction` | A customer successfully buys a stock |
+| `StockSold` | `Transaction` | A customer successfully sells a stock |
+| `PriceChanged` | `Transaction` | A stock's price changes after a transaction |
+
+Subscribers register handler methods with `+=` and remove them with `-=`:
+
+```csharp
+var eventLogger = new StockMarketEventHandlers(dataDirectory);
+var priceAlerts = new PriceAlertService(alertThresholdPercent: 2.0m);
+
+eventLogger.Subscribe(stockProcess.Transaction);
+priceAlerts.Subscribe(stockProcess.Transaction);
+```
+
+- `StockMarketEventHandlers` writes colored console messages and appends every event to `wwwRoot/stockmarket.log`.
+- `PriceAlertService` prints a warning when a price moves by 2% or more.
+
+Both are unsubscribed before the application exits to avoid lingering references.
 
 ## Project Structure
 
@@ -75,8 +105,10 @@ Model/
   Customer.cs
   Inventory.cs
   Stock.cs
+  StockMarketEventArgs.cs
 Process/
   CustomerProcess.cs
+  StockMarketEventHandlers.cs
   StockProcess.cs
   Transaction.cs
 Program.cs
@@ -84,4 +116,5 @@ wwwRoot/
   Customers.json
   Inventories.json
   Stocks.json
+  stockmarket.log
 ```

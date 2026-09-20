@@ -1,9 +1,9 @@
-using EventService.Process;
+using StockMarket.Model.Event;
+using StockMarket.Process;
 
 Console.WriteLine("**--Stock Market Started--**");
 
-string dataDirectory = Path.GetFullPath(
-    Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "wwwRoot"));
+string dataDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "wwwRoot"));
 
 var dal = new MyDataBaseProcess(dataDirectory);
 dal.Initialize();
@@ -11,8 +11,20 @@ dal.Initialize();
 var customerProcess = new CustomerProcess(dal);
 var stockProcess = new StockProcess(dal);
 
+var eventLogger = new StockMarketEventHandlers(dataDirectory);
+var priceAlerts = new PriceAlertService(alertThresholdPercent: 2.0m);
+var customerAlert = new CustomerAlertService(dataDirectory);
+
+eventLogger.Subscribe(stockProcess.Transaction);
+priceAlerts.Subscribe(stockProcess.Transaction);
+customerAlert.Subscribe(customerProcess);
+
 SeedSampleData(customerProcess, stockProcess);
 RunConsoleApplication(customerProcess, stockProcess);
+
+eventLogger.Unsubscribe(stockProcess.Transaction);
+priceAlerts.Unsubscribe(stockProcess.Transaction);
+customerAlert.Unsubscribe(customerProcess);
 
 static void SeedSampleData(CustomerProcess customerProcess, StockProcess stockProcess)
 {
@@ -55,7 +67,7 @@ static void RunConsoleApplication(CustomerProcess customerProcess, StockProcess 
 
         while (true)
         {
-            Console.WriteLine("Enter BUY, SELL, LOGIN, or EXIT:");
+            Console.WriteLine("Enter BUY, SELL, NEW LOGIN, or EXIT:");
             string? command = Console.ReadLine()?.Trim();
 
             if (string.Equals(command, "BUY", StringComparison.OrdinalIgnoreCase))
@@ -66,7 +78,7 @@ static void RunConsoleApplication(CustomerProcess customerProcess, StockProcess 
             {
                 stockProcess.SellStock(customerId);
             }
-            else if (string.Equals(command, "LOGIN", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(command, "NEW LOGIN", StringComparison.OrdinalIgnoreCase))
             {
                 break;
             }
@@ -76,7 +88,7 @@ static void RunConsoleApplication(CustomerProcess customerProcess, StockProcess 
             }
             else
             {
-                Console.WriteLine("Invalid command. Use BUY, SELL, LOGIN, or EXIT.");
+                Console.WriteLine("Invalid command. Use BUY, SELL, NEW LOGIN, or EXIT.");
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace EventService.Model
+﻿namespace StockMarket.Model
 {
     public class Customer
     {

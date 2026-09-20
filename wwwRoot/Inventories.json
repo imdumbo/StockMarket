@@ -4,5 +4,13 @@
     "StockIds": [
       "0ece1e94-8134-47e7-99ff-1a5fe0115dc7"
     ]
+  },
+  {
+    "CustomerId": "9fb6f32c-4a1e-402a-97dd-8ffa1b71f0d1",
+    "StockIds": []
+  },
+  {
+    "CustomerId": "6090cfab-95f0-45ad-904e-fec8d7c171de",
+    "StockIds": []
   }
 ]

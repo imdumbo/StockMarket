@@ -1,5 +1,5 @@
-﻿using EventService.DAL;
-using EventService.Model;
+﻿using StockMarket.DAL;
+using StockMarket.Model;
 using System.Text.Json;
 
 public class MyDataBaseProcess
@@ -22,8 +22,8 @@ public class MyDataBaseProcess
     public void Initialize()
     {
         DataBase.Customers = LoadCollection<Customer>("Customers");
-        DataBase.Stocks = LoadCollection<Stock>("Stocks");
         DataBase.Inventories = LoadCollection<Inventory>("Inventories");
+        DataBase.Stocks = LoadCollection<Stock>("Stocks");
 
         Console.WriteLine($"Loaded {DataBase.Customers.Count} customers, {DataBase.Inventories.Count} inventory records, and {DataBase.Stocks.Count} stock records from JSON.");
     }
